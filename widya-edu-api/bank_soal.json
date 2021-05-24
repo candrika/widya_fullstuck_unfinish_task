@@ -1,0 +1,33 @@
+[
+    {
+        "jumlah halaman": "1",
+        "jumlah soal": "1O",
+        "mata pelajaran": "fisika",
+        "data soal": [
+            {
+                "soal 1": "content_text",
+                "gambar": "img",
+                "pilihan ganda satu": "",
+                "pilihan ganda dua": "",
+                "pilihan ganda tiga": "",
+                "pilihan ganda empat": ""
+            },
+            {
+                "soal 2": "content_text",
+                "gambar": "img",
+                "pilihan ganda satu": "",
+                "pilihan ganda dua": "",
+                "pilihan ganda tiga": "",
+                "pilihan ganda empat": ""
+            },
+            {
+                "soal 3": "content_text",
+                "gambar": "img",
+                "pilihan ganda satu": "",
+                "pilihan ganda dua": "",
+                "pilihan ganda tiga": "",
+                "pilihan ganda empat": ""
+            }
+        ]
+    }
+]
