@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 
@@ -37,45 +38,6 @@ class AuthController extends BaseController
         return JWT::encode($paylaod, env('JWT_SECRET'));
     }
 
-    public function authenticate(Request $request)
-    {
-
-        $roles = [
-            'username' => 'required|String',
-            'password' => 'required|String|min:6'
-        ];
-
-        $message = [
-            'username.required' => 'Email tidak boleh kosong',
-            'password.required' => 'Password tidak boleh kosong'
-        ];
-
-        $valid = Validator::make($request->all(), $roles, $message);
-
-        if ($valid->fails()) {
-            return response()->json(['status' => 'false', 'message' => $valid->errors()], 500);
-        }
-
-        // DB::enableQueryLog();
-        $user = User::select('*')
-            ->join('roles', 'roles.roles_id', '=', 'users.roles_id')
-            ->Where('username', $this->request->input('username'))
-            ->Where('password', $this->request->input('password'))->first();
-        // dd(DB::getQueryLog());
-        if (!$user) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Email yang anda masukan salah atau belum terdaftar'
-            ], 400);
-        } else {
-            return response()->json([
-                'status' => true,
-                'message' => 'Login berhasil',
-                'token' => $this->jwt($user)
-            ], 200);
-        }
-    }
-
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->stateless()->redirect();
@@ -85,7 +47,52 @@ class AuthController extends BaseController
     {
         $providerUser = Socialite::driver('google')->stateless()->user();
 
-        // print_r($providerUser);
-        //update table user
+        // echo "<pre/>";
+        // print_r($providerUser->email);
+
+        $tutor = DB::table('tutor')->where('tutor_email', $providerUser->email)->where('roles_id', 1);
+        ($tutor);
+        // die;
+        if (count($tutor->get()) > 0) {
+
+            $tutor = $tutor->first();
+
+            $user = User::where('username', $providerUser->email);
+
+            $user_data = [
+                'username' => $tutor->tutor_email,
+                'realname' => $tutor->tutor_name,
+                'password' => '123456678',
+                'roles_id' => $tutor->roles_id,
+            ];
+
+            // print_r($user_data);
+
+            if (count($user->get()) > 0) {
+                User::create($user_data);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Login berhasil',
+                'token' => $this->jwt($user)
+            ], 200);
+        } else {
+            //
+            
+            return response()->json([
+                'status' => false,
+                'message' => 'Email anda belum terdaftar sebagai tutor'
+            ], 404);
+        }
+
+
+        /* 
+         return response()->json([
+                'status' => true,
+                'message' => 'Login berhasil',
+                'token' => $this->jwt($user)
+            ], 200);
+        */
     }
 }

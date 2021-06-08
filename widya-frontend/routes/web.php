@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('/', 'App\Http\Controllers\LoginController@index')->name('login');
+Route::get('/', 'App\Http\Controllers\LoginController@RedirectToGoogle')->name('login');
 ROute::post('/login/process', 'App\Http\Controllers\LoginController@LoginProcess');
 Route::get('/login/google', 'App\Http\Controllers\LoginController@RedirectToGoogle')->name('login.google');
 Route::get('/logout', 'App\Http\Controllers\LoginController@Logout');
